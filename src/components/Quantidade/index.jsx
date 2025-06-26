@@ -2,28 +2,9 @@ import React from "react";
 import Botao from "@/components/Botao";
 import Titulo from "@/components/Titulo";
 import { useLocation } from "react-router-dom";
-import { CarrinhoContext } from "@/context/CarrinhoContext";
 
-const Quantidade = ({ itemCarrinho }) => {
+const Quantidade = ({ itemCarrinho, adicionarProduto, removerProduto }) => {
   const location = useLocation();
-
-  const { carrinho, setCarrinho } = React.useContext(CarrinhoContext);
-
-  function removerProduto(id) {
-    const produto = carrinho.find((itemDoCarrinho) => itemDoCarrinho.id === id);
-    const ehOUltimo = produto.quantidade === 1;
-    if (ehOUltimo) {
-      return setCarrinho((carrinhoAnterior) =>
-        carrinhoAnterior.filter((itemDoCarrinho) => itemDoCarrinho.id !== id)
-      );
-    }
-    setCarrinho((carrinhoAnterior) =>
-      carrinhoAnterior.map((itemDoCarrinho) => {
-        if (itemDoCarrinho.id === id) itemDoCarrinho.quantidade -= 1;
-        return itemDoCarrinho;
-      })
-    );
-  }
 
   return (
     <div

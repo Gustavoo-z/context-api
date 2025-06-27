@@ -1,8 +1,15 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { CarrinhoContext } from "@/context/CarrinhoContext";
 
 export const useCarrinhoContext = () => {
-  const { carrinho, setCarrinho } = useContext(CarrinhoContext);
+  const {
+    carrinho,
+    setCarrinho,
+    valorTotal,
+    setValorTotal,
+    quantidade,
+    setQuantidade,
+  } = useContext(CarrinhoContext);
 
   function mudarQuantidade(id, quantidade) {
     return carrinho.map((itemDoCarrinho) => {
@@ -13,7 +20,7 @@ export const useCarrinhoContext = () => {
 
   function adicionarProduto(novoProduto) {
     const temOProduto = carrinho.some(
-      (itemDoCarrinho) => itemDoCarrinho.id === novoProduto.id
+      (itemDoCarrinho) => itemDoCarrinho.id === novoProduto.id,
     );
     if (!temOProduto) {
       novoProduto.quantidade = 1;
@@ -33,7 +40,7 @@ export const useCarrinhoContext = () => {
     const ehOUltimo = produto.quantidade === 1;
     if (ehOUltimo) {
       return setCarrinho((carrinhoAnterior) =>
-        carrinhoAnterior.filter((itemDoCarrinho) => itemDoCarrinho.id !== id)
+        carrinhoAnterior.filter((itemDoCarrinho) => itemDoCarrinho.id !== id),
       );
     }
 
@@ -44,10 +51,22 @@ export const useCarrinhoContext = () => {
 
   function removerProdutoCarrinho(id) {
     const produto = carrinho.filter(
-      (itemDoCarrinho) => itemDoCarrinho.id !== id
+      (itemDoCarrinho) => itemDoCarrinho.id !== id,
     );
     setCarrinho(produto);
   }
+
+  useEffect(() => {
+    const { totalTemp, quantidadeTemp } = carrinho.reduce(
+      (acc, item) => ({
+        totalTemp: acc.totalTemp + item.preco * item.quantidade,
+        quantidadeTemp: acc.quantidadeTemp + item.quantidade,
+      }),
+      { totalTemp: 0, quantidadeTemp: 0 },
+    );
+    setQuantidade(quantidadeTemp);
+    setValorTotal(totalTemp);
+  }, [carrinho]);
 
   return {
     carrinho,
@@ -55,5 +74,7 @@ export const useCarrinhoContext = () => {
     adicionarProduto,
     removerProduto,
     removerProdutoCarrinho,
+    valorTotal,
+    quantidade,
   };
 };
